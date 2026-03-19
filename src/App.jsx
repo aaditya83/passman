@@ -3,6 +3,7 @@ import './App.css'
 import Navbar from './Components/Navbar'
 import Man from './Components/man'
 import Footer from './Components/Footer'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -14,6 +15,7 @@ function App() {
       <Man />
     </div>
     <Footer />
+    <SpeedInsights />
     </>
   )
 }
