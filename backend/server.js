@@ -1,16 +1,15 @@
 require('dotenv').config()
 const express = require('express')
-console.log(process.env.mongourl)
 const { MongoClient } = require('mongodb');
 const cors = require("cors")
 
-const url = 'mongodb://localhost:27017';
+const url = process.env.MONGOURL || 'mongodb://localhost:27017/';
 const client = new MongoClient(url);
 const dbName = 'Passop';
 const app = express()
 app.use(express.json());
 app.use(cors())
-const port = 3000
+const port = process.env.PORT || 3000
 client.connect();
 
 app.get('/', async (req, res) => {
