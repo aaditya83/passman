@@ -3,17 +3,17 @@ import { useRef, useState, useEffect } from 'react'
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 
-const apiBaseUrl = import.meta.env.VITE_API_URL || "/api"
-
 const man = () => {
     const [form, setform] = useState({ site: "", email: "", password: "" })
     const [passarr, setpassarr] = useState([])
 
-    const getpass = async () => {
-        let req = await fetch(`${apiBaseUrl}/`)
-        let third = await req.json()
-        setpassarr(third)
-        console.log(third)
+    const getpass = () => {
+        const savedPasswords = localStorage.getItem("passwords")
+        if (!savedPasswords) {
+            setpassarr([])
+            return
+        }
+        setpassarr(JSON.parse(savedPasswords))
     }
 
     useEffect(() => {
@@ -33,13 +33,7 @@ const man = () => {
         const newItem = { ...form, id: uuidv4() }
         const next = [...passarr, newItem]
         setpassarr(next)
-        let req = await fetch(`${apiBaseUrl}/`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(newItem)
-        });
+        localStorage.setItem("passwords", JSON.stringify(next))
         setform({ site: "", email: "", password: "" })
     }
     const handlechange = (e) => {
@@ -59,16 +53,10 @@ const man = () => {
         });
         navigator.clipboard.writeText(text)
     }
-    const delpass = async(id) => {
+    const delpass = (id) => {
         const next = passarr.filter((item) => item.id !== id)
         setpassarr(next)
-        let req = await fetch(`${apiBaseUrl}/`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({id})
-        });
+        localStorage.setItem("passwords", JSON.stringify(next))
     }
     const editpass = (id) => {
         const current = passarr.find((i) => i.id === id)
