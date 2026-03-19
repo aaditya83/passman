@@ -7,10 +7,27 @@ const url = process.env.MONGOURL || 'mongodb://localhost:27017/';
 const client = new MongoClient(url);
 const dbName = 'Passop';
 const app = express()
+
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    'http://localhost:5173',
+].filter(Boolean)
+
 app.use(express.json());
-app.use(cors())
+app.use(cors({
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true)
+        }
+        return callback(new Error('Not allowed by CORS'))
+    }
+}))
 const port = process.env.PORT || 3000
 client.connect();
+
+app.get('/health', (req, res) => {
+    res.json({ success: true })
+})
 
 app.get('/', async (req, res) => {
     const db = client.db(dbName);
